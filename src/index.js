@@ -40,10 +40,13 @@ class DataProvider {
   };
 
   provideData = (type, resource, params) => {
-    const newParams = this.paramsPatch(type, params);
+    let newParams;
+    if (this.paramsPatch) {
+      newParams = this.paramsPatch(type, params);
+    }
+
     const mappings = this.resourceMappings[resource];
     const mappingType = this.actionToMappingType[type];
-
     if (mappings && mappingType) {
       return this.actionHandlers[type](newParams, mappings[mappingType]);
     }
