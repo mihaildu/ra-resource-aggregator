@@ -1,11 +1,7 @@
 class DataProvider {
   constructor(props) {
     // TODO props validation
-    const {
-      dataProvider,
-      resources,
-      paramsPatch
-    } = props;
+    const { dataProvider, resources, paramsPatch } = props;
 
     this.paramsPatch = paramsPatch;
     this.dataProvider = dataProvider;
@@ -396,13 +392,9 @@ class DataProvider {
         break;
       }
     }
-    const mainTableResult = await this.dataProvider(
-      'CREATE',
-      mainTableName,
-      {
-        data: mainTable.data
-      }
-    );
+    const mainTableResult = await this.dataProvider('CREATE', mainTableName, {
+      data: mainTable.data
+    });
 
     // run all other creates
     const queries = [];
