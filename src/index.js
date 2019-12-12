@@ -49,16 +49,16 @@ class DataProvider {
     return this.dataProvider(type, resource, newParams);
   };
 
-  handleGetList = async (params, tables) => {
+  handleGetList = async (params, resources) => {
     const { queries, totalRecords } = await this.runGetQueries({
       mainType: 'GET_LIST',
       params,
-      tables,
+      resources,
       getTotal: true
     });
 
     const total = await totalRecords;
-    const result = await this.handleGetQueries(queries, tables);
+    const result = await this.handleGetQueries(queries, resources);
     const data = Object.values(result);
     return {
       data,
@@ -66,15 +66,15 @@ class DataProvider {
     };
   };
 
-  handleGetOne = async (params, tables) => {
+  handleGetOne = async (params, resources) => {
     const { queries } = await this.runGetQueries({
       mainType: 'GET_ONE',
       params,
-      tables,
+      resources,
       getTotal: false
     });
 
-    const result = await this.handleGetQueries(queries, tables);
+    const result = await this.handleGetQueries(queries, resources);
     const data = Object.values(result)[0];
     // going back from array to object & adding id required by react-admin
     return {
@@ -82,16 +82,16 @@ class DataProvider {
     };
   };
 
-  hasAccumulateTable = tables => {
-    for (let tableName in tables) {
-      if (tables[tableName].accumulate) {
+  hasAccumulateResource = resources => {
+    for (let resourceName in resources) {
+      if (resources[resourceName].accumulate) {
         return true;
       }
     }
     return false;
   };
 
-  getNonIdColumn = data => {
+  getNonIdField = data => {
     for (let key in data) {
       if (key !== 'id') {
         return key;
@@ -113,14 +113,14 @@ class DataProvider {
     /**
      * Generates list of new records to add to db
      */
-    const nonIdColumn = this.getNonIdColumn(data);
+    const nonIdField = this.getNonIdField(data);
     const dataHash = previousData
-      ? this.buildHashForData(previousData[nonIdColumn])
+      ? this.buildHashForData(previousData[nonIdField])
       : {};
 
     const recordsToAdd = [];
-    for (let index in data[nonIdColumn]) {
-      const value = data[nonIdColumn][index];
+    for (let index in data[nonIdField]) {
+      const value = data[nonIdField][index];
       if (!dataHash[value]) {
         const recordToAdd = {};
         for (let key in data) {
@@ -143,12 +143,12 @@ class DataProvider {
       return [];
     }
 
-    const nonIdColumn = this.getNonIdColumn(previousData);
-    const dataHash = this.buildHashForData(data[nonIdColumn]);
+    const nonIdField = this.getNonIdField(previousData);
+    const dataHash = this.buildHashForData(data[nonIdField]);
 
     const idsToDelete = [];
-    for (let index in previousData[nonIdColumn]) {
-      const value = previousData[nonIdColumn][index];
+    for (let index in previousData[nonIdField]) {
+      const value = previousData[nonIdField][index];
       if (!dataHash[value]) {
         idsToDelete.push(previousData.id[index]);
       }
@@ -157,27 +157,27 @@ class DataProvider {
     return idsToDelete;
   };
 
-  runAccumulateQueries = (params, table, tableName) => {
-    const idsToDelete = this.deleteDiff(table.previousData, table.data);
+  runAccumulateQueries = (params, resource, resourceName) => {
+    const idsToDelete = this.deleteDiff(resource.previousData, resource.data);
     idsToDelete.forEach(id => {
-      this.dataProvider('DELETE', tableName, {
+      this.dataProvider('DELETE', resourceName, {
         id,
         previousData: {}
       });
     });
 
     let queries = [];
-    let newRecords = this.createDiff(table.data, table.previousData);
+    let newRecords = this.createDiff(resource.data, resource.previousData);
     newRecords.forEach(record => {
-      const query = this.dataProvider('CREATE', tableName, {
-        data: Object.assign({}, record, table.getForeignKey(params.id))
+      const query = this.dataProvider('CREATE', resourceName, {
+        data: Object.assign({}, record, resource.getForeignKey(params.id))
       });
       queries.push(query);
     });
 
     const newIds = [];
-    for (let index in table.data.id) {
-      const newId = table.data.id[index];
+    for (let index in resource.data.id) {
+      const newId = resource.data.id[index];
       if (idsToDelete.includes(newId)) {
         continue;
       }
@@ -190,32 +190,32 @@ class DataProvider {
       });
       return {
         data: {
-          ...table.data,
+          ...resource.data,
           id: newIds
         }
       };
     });
   };
 
-  handleUpdate = async (params, tables) => {
-    this.disaggregateData(params, tables, 'data');
-    if (this.hasAccumulateTable(tables)) {
+  handleUpdate = async (params, resources) => {
+    this.disaggregateData(params, resources, 'data');
+    if (this.hasAccumulateResource(resources)) {
       /**
        * We need previousData for many-to-many relationships
        * TODO(mihail): we should build previousData only for accumulate
-       * table but I don't consider this to be a big overhead for now
+       * resource but I don't consider this to be a big overhead for now
        */
-      this.disaggregateData(params, tables, 'previousData');
+      this.disaggregateData(params, resources, 'previousData');
     }
 
-    const { queries } = await this.runUpdateQueries({ params, tables });
+    const { queries } = await this.runUpdateQueries({ params, resources });
 
-    // clear table.data
-    for (let tableName in tables) {
-      tables[tableName].data = {};
+    // clear resource.data
+    for (let resourceName in resources) {
+      resources[resourceName].data = {};
     }
 
-    const result = await this.handleUpdateQueries(queries, tables);
+    const result = await this.handleUpdateQueries(queries, resources);
     const data = Object.values(result)[0];
     const id = parseInt(Object.keys(result)[0]);
     return {
@@ -224,39 +224,39 @@ class DataProvider {
     };
   };
 
-  initParamsData = (params, tables) => {
+  initParamsData = (params, resources) => {
     let newParams = params;
-    for (let tableName in tables) {
-      const table = tables[tableName];
-      if (table.initData) {
+    for (let resourceName in resources) {
+      const resource = resources[resourceName];
+      if (resource.initData) {
         newParams = Object.assign({}, params, {
-          data: table.initData(params.data)
+          data: resource.initData(params.data)
         });
       }
     }
     return newParams;
   };
 
-  handleCreate = async (params, tables) => {
-    const newParams = this.initParamsData(params, tables);
-    this.disaggregateData(newParams, tables, 'data');
+  handleCreate = async (params, resources) => {
+    const newParams = this.initParamsData(params, resources);
+    this.disaggregateData(newParams, resources, 'data');
 
     const {
-      mainTableData,
-      mainTableName,
+      mainResourceData,
+      mainResourceName,
       queries
-    } = await this.runCreateQueries({ tables });
+    } = await this.runCreateQueries({ resources });
 
-    // clear table.data
-    for (let tableName in tables) {
-      tables[tableName].data = {};
+    // clear resource.data
+    for (let resourceName in resources) {
+      resources[resourceName].data = {};
     }
 
     const result = await this.handleCreateQueries(
       queries,
-      tables,
-      mainTableData,
-      mainTableName
+      resources,
+      mainResourceData,
+      mainResourceName
     );
     const data = Object.values(result)[0];
     const id = parseInt(Object.keys(result)[0]);
@@ -265,15 +265,15 @@ class DataProvider {
     };
   };
 
-  handleDelete = async (params, tables) => {
-    return this.runDeleteQueries({ params, tables });
+  handleDelete = async (params, resources) => {
+    return this.runDeleteQueries({ params, resources });
   };
 
-  handleDeleteMany = async (params, tables) => {
+  handleDeleteMany = async (params, resources) => {
     const getQueries = [];
     const deleteQueries = [];
     params.ids.forEach(id => {
-      getQueries.push(this.handleGetOne({ id }, tables));
+      getQueries.push(this.handleGetOne({ id }, resources));
     });
 
     const records = await Promise.all(getQueries);
@@ -281,7 +281,7 @@ class DataProvider {
       deleteQueries.push(
         this.handleDelete(
           { id: record.data.id, previousData: record.data },
-          tables
+          resources
         )
       );
     });
@@ -292,32 +292,32 @@ class DataProvider {
     };
   };
 
-  runGetQueries = ({ mainType, params, tables, getTotal = false }) => {
+  runGetQueries = ({ mainType, params, resources, getTotal = false }) => {
     const queries = [];
     let totalRecords = 0;
-    for (let tableName in tables) {
-      const table = tables[tableName];
+    for (let resourceName in resources) {
+      const resource = resources[resourceName];
 
       let query;
       let newParams = params;
-      if (table.params) {
-        newParams = table.params(params);
+      if (resource.params) {
+        newParams = resource.params(params);
       }
-      if (table.main) {
-        query = this.dataProvider(mainType, tableName, newParams);
+      if (resource.main) {
+        query = this.dataProvider(mainType, resourceName, newParams);
         if (getTotal) {
           totalRecords = this.getAllRecords({
-            tableName,
+            resourceName,
             filter: newParams.filter
           }).then(res => res.data.length);
         }
       } else {
         // TODO maybe filter here...
-        query = this.getAllRecords({ tableName });
+        query = this.getAllRecords({ resourceName });
       }
       queries.push({
         query,
-        tableName
+        resourceName
       });
     }
 
@@ -327,31 +327,31 @@ class DataProvider {
     };
   };
 
-  handleGetQueries = async (queries, tables) => {
+  handleGetQueries = async (queries, resources) => {
     const queryPromises = queries.map(query => query.query);
-    const tableNames = queries.map(query => query.tableName);
-    const tablesData = await Promise.all(queryPromises);
-    this.storeTablesData(tablesData, tableNames, tables);
-    return this.aggregateData(tables);
+    const resourceNames = queries.map(query => query.resourceName);
+    const resourcesData = await Promise.all(queryPromises);
+    this.storeResourcesData(resourcesData, resourceNames, resources);
+    return this.aggregateData(resources);
   };
 
-  runUpdateQueries = ({ params, tables }) => {
+  runUpdateQueries = ({ params, resources }) => {
     /**
      * I just need the data to be updated
      * no previousData
      */
     const queries = [];
-    for (let tableName in tables) {
+    for (let resourceName in resources) {
       let query;
-      const table = tables[tableName];
-      if (!table.accumulate) {
-        query = this.runNonAccumulateUpdateQuery(table, tableName, params);
+      const resource = resources[resourceName];
+      if (!resource.accumulate) {
+        query = this.runNonAccumulateUpdateQuery(resource, resourceName, params);
       } else {
-        query = this.runAccumulateQueries(params, table, tableName);
+        query = this.runAccumulateQueries(params, resource, resourceName);
       }
       queries.push({
         query,
-        tableName
+        resourceName
       });
     }
     return {
@@ -359,217 +359,217 @@ class DataProvider {
     };
   };
 
-  runNonAccumulateUpdateQuery = (table, tableName, params) => {
+  runNonAccumulateUpdateQuery = (resource, resourceName, params) => {
     let id;
-    if (table.main) {
+    if (resource.main) {
       id = params.id;
     } else {
-      id = table.data.id;
+      id = resource.data.id;
     }
-    return this.dataProvider('UPDATE', tableName, {
+    return this.dataProvider('UPDATE', resourceName, {
       id,
-      data: table.data
+      data: resource.data
     });
   };
 
-  handleUpdateQueries = async (queries, tables) => {
+  handleUpdateQueries = async (queries, resources) => {
     const queryPromises = queries.map(query => query.query);
-    const tableNames = queries.map(query => query.tableName);
+    const resourceNames = queries.map(query => query.resourceName);
 
     // aggregate again and return result
-    const tablesData = await Promise.all(queryPromises);
-    this.storeTablesData(tablesData, tableNames, tables);
-    return this.aggregateData(tables);
+    const resourcesData = await Promise.all(queryPromises);
+    this.storeResourcesData(resourcesData, resourceNames, resources);
+    return this.aggregateData(resources);
   };
 
-  runCreateQueries = async ({ tables }) => {
-    let mainTable;
-    let mainTableName;
-    for (let tableName in tables) {
-      if (tables[tableName].main) {
-        mainTable = tables[tableName];
-        mainTableName = tableName;
+  runCreateQueries = async ({ resources }) => {
+    let mainResource;
+    let mainResourceName;
+    for (let resourceName in resources) {
+      if (resources[resourceName].main) {
+        mainResource = resources[resourceName];
+        mainResourceName = resourceName;
         break;
       }
     }
-    const mainTableResult = await this.dataProvider('CREATE', mainTableName, {
-      data: mainTable.data
+    const mainResourceResult = await this.dataProvider('CREATE', mainResourceName, {
+      data: mainResource.data
     });
 
     // run all other creates
     const queries = [];
-    for (let tableName in tables) {
-      const table = tables[tableName];
-      if (table.main) {
+    for (let resourceName in resources) {
+      const resource = resources[resourceName];
+      if (resource.main) {
         continue;
       }
 
       let query;
-      if (table.accumulate) {
+      if (resource.accumulate) {
         query = this.runAccumulateQueries(
-          { id: mainTableResult.data.id },
-          table,
-          tableName
+          { id: mainResourceResult.data.id },
+          resource,
+          resourceName
         );
       } else {
-        query = this.dataProvider('CREATE', tableName, {
+        query = this.dataProvider('CREATE', resourceName, {
           data: Object.assign(
             {},
-            table.data,
-            table.getForeignKey(mainTableResult.data.id)
+            resource.data,
+            resource.getForeignKey(mainResourceResult.data.id)
           )
         });
       }
       queries.push({
         query,
-        tableName
+        resourceName
       });
     }
 
     return {
-      mainTableData: mainTableResult,
-      mainTableName,
+      mainResourceData: mainResourceResult,
+      mainResourceName,
       queries
     };
   };
 
   handleCreateQueries = async (
     queries,
-    tables,
-    mainTableData,
-    mainTableName
+    resources,
+    mainResourceData,
+    mainResourceName
   ) => {
     const queryPromises = queries.map(query => query.query);
-    const tableNames = queries.map(query => query.tableName);
-    const tablesData = await Promise.all(queryPromises);
+    const resourceNames = queries.map(query => query.resourceName);
+    const resourcesData = await Promise.all(queryPromises);
 
-    tablesData.push(mainTableData);
-    tableNames.push(mainTableName);
-    this.storeTablesData(tablesData, tableNames, tables);
-    return this.aggregateData(tables);
+    resourcesData.push(mainResourceData);
+    resourceNames.push(mainResourceName);
+    this.storeResourcesData(resourcesData, resourceNames, resources);
+    return this.aggregateData(resources);
   };
 
-  runDeleteQueries = ({ params, tables }) => {
-    // delete from all other tables
-    for (let tableName in tables) {
-      const table = tables[tableName];
-      if (table.main) {
+  runDeleteQueries = ({ params, resources }) => {
+    // delete from all other resources
+    for (let resourceName in resources) {
+      const resource = resources[resourceName];
+      if (resource.main) {
         continue;
       }
 
-      if (table.accumulate) {
-        const idsToDelete = table.getId(params.previousData);
+      if (resource.accumulate) {
+        const idsToDelete = resource.getId(params.previousData);
         idsToDelete.forEach(id => {
-          this.dataProvider('DELETE', tableName, {
+          this.dataProvider('DELETE', resourceName, {
             id,
             previousData: {}
           });
         });
       } else {
-        this.dataProvider('DELETE', tableName, {
-          id: table.getId(params.previousData),
+        this.dataProvider('DELETE', resourceName, {
+          id: resource.getId(params.previousData),
           previousData: {}
         });
       }
     }
 
-    // delete from main table
-    for (let tableName in tables) {
-      if (tables[tableName].main) {
-        return this.dataProvider('DELETE', tableName, {
+    // delete from main resource
+    for (let resourceName in resources) {
+      if (resources[resourceName].main) {
+        return this.dataProvider('DELETE', resourceName, {
           id: params.id,
           previousData: {}
         });
       }
     }
 
-    // no main table - should not happen
+    // no main resource - should not happen
     return { data: null };
   };
 
-  storeTablesData = (tablesData, tableNames, tables) => {
-    tablesData.forEach(({ data: tableData }, index) => {
-      const tableName = tableNames[index];
-      const table = tables[tableName];
-      if (!Array.isArray(tableData)) {
-        table.data = [tableData];
+  storeResourcesData = (resourcesData, resourceNames, resources) => {
+    resourcesData.forEach(({ data: resourceData }, index) => {
+      const resourceName = resourceNames[index];
+      const resource = resources[resourceName];
+      if (!Array.isArray(resourceData)) {
+        resource.data = [resourceData];
       } else {
-        table.data = tableData;
+        resource.data = resourceData;
       }
     });
   };
 
-  addColumnData = ({
+  addFieldData = ({
     aggregatedData,
     row,
     key,
-    column,
+    field,
     accumulate = false
   }) => {
-    let srcColumn, dstColumn;
-    if (typeof column === 'string') {
-      dstColumn = column;
-      srcColumn = column;
+    let srcField, dstField;
+    if (typeof field === 'string') {
+      dstField = field;
+      srcField = field;
     } else {
-      dstColumn = column.alias;
-      srcColumn = column.name;
+      dstField = field.alias;
+      srcField = field.name;
     }
 
     if (accumulate) {
-      if (aggregatedData[key][dstColumn]) {
-        aggregatedData[key][dstColumn].push(row[srcColumn]);
+      if (aggregatedData[key][dstField]) {
+        aggregatedData[key][dstField].push(row[srcField]);
       } else {
-        aggregatedData[key][dstColumn] = [row[srcColumn]];
+        aggregatedData[key][dstField] = [row[srcField]];
       }
     } else {
-      aggregatedData[key][dstColumn] = row[srcColumn];
+      aggregatedData[key][dstField] = row[srcField];
     }
   };
 
-  aggregateData = tables => {
+  aggregateData = resources => {
     /**
-     * Aggregate data from table.data, for each table in tables
-     * table.data contains rows with all the columns
-     * table.columns specifies which columns to aggregate
+     * Aggregate data from resource.data, for each resource in resources
+     * resource.data contains rows with all the fields
+     * resource.fields specifies which fields to aggregate
      */
     const aggregatedData = {};
 
-    let mainTable = Object.values(tables).find(table => table.main === true);
-    mainTable.data.forEach(row => {
-      const key = mainTable.key(row, tables);
+    let mainResource = Object.values(resources).find(resource => resource.main === true);
+    mainResource.data.forEach(row => {
+      const key = mainResource.key(row, resources);
       aggregatedData[key] = {};
-      mainTable.columns.forEach(column => {
-        this.addColumnData({
+      mainResource.fields.forEach(field => {
+        this.addFieldData({
           aggregatedData,
           row,
           key,
-          column,
+          field,
           accumulate: false
         });
       });
     });
 
-    // aggregate all other table data
-    for (let tableName in tables) {
-      const table = tables[tableName];
-      if (table.main) {
+    // aggregate all other resource data
+    for (let resourceName in resources) {
+      const resource = resources[resourceName];
+      if (resource.main) {
         continue;
       }
 
-      table.data.forEach(row => {
-        const key = table.key(row, tables);
+      resource.data.forEach(row => {
+        const key = resource.key(row, resources);
         if (!aggregatedData[key]) {
-          // row has no relation with main table data
+          // row has no relation with main resource data
           return;
         }
 
-        table.columns.forEach(column => {
-          this.addColumnData({
+        resource.fields.forEach(field => {
+          this.addFieldData({
             aggregatedData,
             row,
             key,
-            column,
-            accumulate: table.accumulate
+            field,
+            accumulate: resource.accumulate
           });
         });
       });
@@ -577,45 +577,45 @@ class DataProvider {
     return aggregatedData;
   };
 
-  disaggregateData = (params, tables, key) => {
+  disaggregateData = (params, resources, key) => {
     /**
-     * Splits data from params into tables (table.data)
+     * Splits data from params into resources (resource.data)
      *   key should be 'data' or 'previousData'
      */
-    for (let tableName in tables) {
-      tables[tableName][key] = {};
+    for (let resourceName in resources) {
+      resources[resourceName][key] = {};
     }
     for (let paramName in params[key]) {
-      this.updateParamInTables(paramName, params[key], tables, key);
+      this.updateParamInResources(paramName, params[key], resources, key);
     }
   };
 
-  updateParamInTables = (paramName, paramsData, tables, key) => {
+  updateParamInResources = (paramName, paramsData, resources, key) => {
     /**
-     * Looks for paramName in tables and
-     * updates table.data with its value
+     * Looks for paramName in resources and
+     * updates resource.data with its value
      */
-    for (let tableName in tables) {
-      const table = tables[tableName];
-      for (let colName of table.columns) {
-        if (typeof colName === 'string' && colName === paramName) {
-          table[key][colName] = paramsData[paramName];
+    for (let resourceName in resources) {
+      const resource = resources[resourceName];
+      for (let fieldName of resource.fields) {
+        if (typeof fieldName === 'string' && fieldName === paramName) {
+          resource[key][fieldName] = paramsData[paramName];
           return;
-        } else if (colName.alias === paramName) {
-          table[key][colName.name] = paramsData[paramName];
+        } else if (fieldName.alias === paramName) {
+          resource[key][fieldName.name] = paramsData[paramName];
           return;
         }
       }
     }
   };
 
-  getAllRecords = ({ tableName, filter = {} }) => {
-    return this.dataProvider('GET_LIST', tableName, {
+  getAllRecords = ({ resourceName, filter = {} }) => {
+    return this.dataProvider('GET_LIST', resourceName, {
       pagination: { page: 1, perPage: 1 },
       sort: { field: 'id', order: 'DESC' },
       filter
     }).then(res => {
-      return this.dataProvider('GET_LIST', tableName, {
+      return this.dataProvider('GET_LIST', resourceName, {
         pagination: { page: 1, perPage: res.total },
         sort: { field: 'id', order: 'DESC' },
         filter
