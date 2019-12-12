@@ -1,0 +1,31 @@
+{
+  "name": "ra-resource-aggregator",
+  "version": "0.0.1",
+  "description": "Resource aggregator for react-admin",
+  //"main": "src/index.js",
+  "authors": [
+    "Mihail Dunaev"
+  ],
+  "repository": "dryhten/ra-resource-aggregator",
+  "homepage": "https://github.com/dryhten/ra-resource-aggregator#readme",
+  "bugs": "https://github.com/dryhten/ra-resource-aggregator/issues",
+  "license": "MIT",
+  "scripts": {
+    "build-index": "create-index src/Resources/ -u -d",
+    //"test": "TODO",
+    "eslint": "eslint src",
+    "prettier": "prettier 'src/**/*.{js,json,css,jsx}' --write 1>/dev/null",
+    "prettier-lint": "prettylint 'src/**/*.{js,json,css,jsx}'"
+  },
+  //"dependencies": {},
+  "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.7.0",
+    "babel-eslint": "9.0.0",
+    "create-index": "^2.5.0",
+    "eslint": "5.6.0",
+    "eslint-plugin-jest": "^23.0.3",
+    //"eslint-plugin-react": "^7.16.0",
+    "prettier": "1.19.1",
+    "prettylint": "^1.0.0"
+  }
+}
