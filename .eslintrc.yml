@@ -1,0 +1,31 @@
+env:
+  browser: true
+  node: true
+  es6: true
+globals:
+  require: true
+parser:
+  babel-eslint
+extends:
+  - eslint:recommended
+  - plugin:jest/recommended
+  - plugin:jest/style
+plugins:
+  - jest
+rules:
+  no-console: "error"
+  jest/no-disabled-tests: "warn"
+  jest/no-focused-tests: "error"
+  jest/no-identical-title: "error"
+  jest/prefer-to-have-length: "warn"
+  jest/valid-expect: "error"
+  jest/globals: 0
+  complexity: [2, 15]
+  curly: 2
+  eqeqeq: 2
+  strict: 0
+  no-var: 2
+  no-unexpected-multiline: 2
+  no-unused-vars:
+    - 2
+    - vars: all
