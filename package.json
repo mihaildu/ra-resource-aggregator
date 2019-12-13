@@ -11,6 +11,8 @@
   "bugs": "https://github.com/dryhten/ra-resource-aggregator/issues",
   "license": "MIT",
   "scripts": {
+    "build": "webpack --env development",
+    "build-production": "webpack --env production",
     "eslint": "eslint src",
     "prettier": "prettier 'src/**/*.{js,json,css,jsx}' --write 1>/dev/null",
     "prettier-lint": "prettylint 'src/**/*.{js,json,css,jsx}'"
