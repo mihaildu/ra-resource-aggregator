@@ -2,7 +2,7 @@
   "name": "ra-resource-aggregator",
   "version": "0.0.1",
   "description": "Resource aggregator for react-admin",
-  "main": "src/index.js",
+  "main": "lib/main.js",
   "authors": [
     "Mihail Dunaev"
   ],
@@ -16,11 +16,15 @@
     "prettier-lint": "prettylint 'src/**/*.{js,json,css,jsx}'"
   },
   "devDependencies": {
+    "@babel/core": "^7.7.5",
     "@babel/plugin-proposal-class-properties": "^7.7.0",
     "babel-eslint": "9.0.0",
+    "babel-loader": "^8.0.6",
     "eslint": "5.6.0",
     "eslint-plugin-jest": "^23.0.3",
     "prettier": "1.19.1",
-    "prettylint": "^1.0.0"
+    "prettylint": "^1.0.0",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10"
   }
 }
