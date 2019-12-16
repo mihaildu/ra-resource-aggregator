@@ -6,6 +6,10 @@ You might want to map a single resource to several backend entities for listing,
 editing and creating. This is where this package is useful, it allows you to use
 data from multiple entities in the list/edit/create views.
 
+This package was tested only with `react-admin@2.6.2` and `ra-data-hasura@0.0.2`.
+Anything else might not work. There is an open issue about running compatibility
+tests here https://github.com/dryhten/ra-resource-aggregator/issues/1
+
 ## Basic example
 
 Let's take an example: we have a database with 2 tables, `users` and `profiles`.
