@@ -303,3 +303,32 @@ to it. This will accumulate values found in `users_groups` into one field
 All of this makes more sense if you look at UsersGroups in example.
 
 #### Props
+
+These are for each resource (e.g. `LIST.resource1`). The ones in bold are required.
+
+* List
+  * **main**: boolean, marks the main table
+  * *params*: function (params), applied to params before sending them to dataProvider, must return new params
+  * **fields**: array of either string or objects of {name: string, alias: string}
+    what fields to use from the resource; fields should be unique, if they are not use
+    alias to define the resulting unique name after aggregation; id must be present here for main table
+  * **key**: function (record, allResources), uniquely identifies one record (e.g. id for main table, foreign key for other tables)
+* Edit
+  * **main**: same as above
+  * *params*: same as above
+  * **fields**: same as above
+  * **key**: same as above
+  * *accumulate*: boolean, specifies if resource represents a many to many relationship
+  * *getForeignKey*: function (main table id), only needed when accumulate is true, returns an object that only has the field name of the foreign key with the value of the main table id
+* Create
+  * **main**: same as above
+  * *initData*: function (params.data), applies changes to data before creating new records
+  * **fields**: same as above
+  * **key**: same as above
+  * *accumulate* & *getForeignKey* - same as above
+* Delete
+  * **main**: same as above
+  * **fields**: this is usually an empty array, not really needed but it expects array for now
+  * **key**: same as above
+  * *getId*: required for non main tables, it's a function(record) that should return the resource id from aggregated data (e.g. including alias)
+  * *accumulate*: same as above
