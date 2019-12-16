@@ -6,9 +6,10 @@ You might want to map a single resource to several backend entities for listing,
 editing and creating. This is where this package is useful, it allows you to use
 data from multiple entities in the list/edit/create views.
 
-This package was tested only with `react-admin@2.6.2` and `ra-data-hasura@0.0.2`,
-and `ra-data-json-server@2.6.2`. Anything else might not work. There is an open
-issue about running compatibility tests here
+This package was tested only with `react-admin@2.6.2`, `ra-data-hasura@0.0.2`
+and `ra-data-json-server@2.6.2`. Any data provider that is compatible with
+react-admin 2.6.2 should work, but I can't guarantee. There is an open issue
+about running compatibility tests here
 https://github.com/dryhten/ra-resource-aggregator/issues/1
 
 ## Table of contents
@@ -43,7 +44,14 @@ this.resourceAggregator = new ResourceAggregator({
   dataProvider: ...
   resources: Resources
   paramsPatch: ...
-    });
+});
+
+...
+
+<Admin dataProvider={this.resourceAggregator.provideData}>
+...
+</Admin>
+
 ```
 
 You can use the data provider of your choice for `dataProvider`. `paramsPatch`
@@ -111,6 +119,8 @@ export default MyResource
 ```
 
 ## Basic example
+
+(This example is implemented in [example](https://github.com/dryhten/ra-resource-aggregator/tree/master/example) directory. It's fully functional)
 
 Let's take an example: we have a database with 2 tables, `users` and `profiles`.
 In `users` we have the `username` & `email` columns, in `profiles` we have
@@ -280,7 +290,5 @@ getId: data => data.profile_id,
 ```
 
 TODO describe `accumulate`
-
-TODO add full working example
 
 TODO add table with every prop + required/optional + short description
