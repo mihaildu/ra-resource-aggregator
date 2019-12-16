@@ -4335,6 +4335,11 @@ ra-language-english@^2.9.9:
   resolved "https://registry.yarnpkg.com/ra-language-english/-/ra-language-english-2.9.9.tgz#e8d90d40df8e5e66de8a7b3a72f33dd9de638501"
   integrity sha512-tWybE7ZnCRyiVAWcyN02LA4v5oi030A853lLDmTJUJySUMSwqyy3EpAdiLrOXfe3XKEoyIjRLGQK54iX2cQ/Mw==
 
+ra-resource-aggregator@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/ra-resource-aggregator/-/ra-resource-aggregator-0.0.3.tgz#12a9931d41068ccdf46e2b3f02a030170c2daafa"
+  integrity sha512-RW6Mg9RIAg4K9CsKKkBIrFdRQyVOluX+Svs/8MlwRrQTKEoiEkA7ZyGE/tPZaJYZmTvSRdV0lEQ1XnxH7laS4Q==
+
 ra-ui-materialui@^2.9.9:
   version "2.9.9"
   resolved "https://registry.yarnpkg.com/ra-ui-materialui/-/ra-ui-materialui-2.9.9.tgz#fc2be0f5e9170d16a04c5fa2f30bac11b76afa35"
