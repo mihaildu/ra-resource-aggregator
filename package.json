@@ -28,5 +28,8 @@
     "prettylint": "^1.0.0",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.10"
+  },
+  "peerDependencies": {
+    "react-admin": "^2.6.2"
   }
 }
