@@ -1,6 +1,5 @@
 class DataProvider {
   constructor(props) {
-    // TODO props validation
     const { dataProvider, resources, paramsPatch } = props;
 
     this.paramsPatch = paramsPatch;
@@ -202,15 +201,12 @@ class DataProvider {
     if (this.hasAccumulateResource(resources)) {
       /**
        * We need previousData for many-to-many relationships
-       * TODO(mihail): we should build previousData only for accumulate
-       * resource but I don't consider this to be a big overhead for now
        */
       this.disaggregateData(params, resources, 'previousData');
     }
 
     const { queries } = await this.runUpdateQueries({ params, resources });
 
-    // clear resource.data
     for (let resourceName in resources) {
       resources[resourceName].data = {};
     }
@@ -247,7 +243,6 @@ class DataProvider {
       queries
     } = await this.runCreateQueries({ resources });
 
-    // clear resource.data
     for (let resourceName in resources) {
       resources[resourceName].data = {};
     }
@@ -312,7 +307,6 @@ class DataProvider {
           }).then(res => res.data.length);
         }
       } else {
-        // TODO maybe filter here...
         query = this.getAllRecords({ resourceName });
       }
       queries.push({
@@ -376,7 +370,6 @@ class DataProvider {
     const queryPromises = queries.map(query => query.query);
     const resourceNames = queries.map(query => query.resourceName);
 
-    // aggregate again and return result
     const resourcesData = await Promise.all(queryPromises);
     this.storeResourcesData(resourcesData, resourceNames, resources);
     return this.aggregateData(resources);
