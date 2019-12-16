@@ -24,6 +24,7 @@ yarn build
 The resulting file will be in `lib` along with `index.html` that loads it.
 To view the result you have to serve static file from the `lib` directory.
 For example you can use python, run this from `lib`:
+
 Python 2
 ```
 python -m SimpleHTTPServer 8000
