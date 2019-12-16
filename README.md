@@ -6,9 +6,109 @@ You might want to map a single resource to several backend entities for listing,
 editing and creating. This is where this package is useful, it allows you to use
 data from multiple entities in the list/edit/create views.
 
-This package was tested only with `react-admin@2.6.2` and `ra-data-hasura@0.0.2`.
-Anything else might not work. There is an open issue about running compatibility
-tests here https://github.com/dryhten/ra-resource-aggregator/issues/1
+This package was tested only with `react-admin@2.6.2` and `ra-data-hasura@0.0.2`,
+and `ra-data-json-server@2.6.2`. Anything else might not work. There is an open
+issue about running compatibility tests here
+https://github.com/dryhten/ra-resource-aggregator/issues/1
+
+## Table of contents
+
+<!-- toc -->
+
+- [Setup](#setup)
+- [Basic example](#basic-example)
+- [Mappings](#mappings)
+
+<!-- tocstop -->
+
+## Setup
+
+You need react-admin v2 for this.
+
+Install with npm
+```
+npm install ra-resource-aggregator
+```
+or with yarn
+```
+yarn add ra-resource-aggregator
+```
+
+Then in your app:
+```
+import ResourceAggregator from 'ra-resource-aggregator';
+import * as Resources from './Resources';
+
+this.resourceAggregator = new ResourceAggregator({
+  dataProvider: ...
+  resources: Resources
+  paramsPatch: ...
+    });
+```
+
+You can use the data provider of your choice for `dataProvider`. `paramsPatch`
+is an optional prop that can be a function to be applied to params everytime
+a new action is run by react-admin (e.g. data type conversions for arrays if
+your backend is a PostgreSQL database).
+
+`Resources` is a list of objects that follow a specific format:
+```
+const MyResource = {
+  resourceName: 'MyResource',
+  resource: (
+    <Resource
+      name="MyResource"
+      list={MyResourceList}
+      edit={MyResourceEdit}
+      create={MyResourceCreate}
+      options={{ label: LABEL }}
+    />
+  ),
+  dataProviderMappings: {
+    LIST: {
+      resource1: {
+        main: true,
+        params: oldParams => oldParams,
+        fields: ['id', ...],
+        key: data => data.id
+      },
+      resource2: {
+        main: false,
+        params: oldParams => oldParams,
+        fields: [...],
+        key: data => {... return id;}
+      }
+      ...
+    },
+    EDIT: {
+      resource1: {
+        ...
+      },
+      resource2: {
+        ...
+      }
+    },
+    CREATE: {
+      resource1: {
+        ...
+      },
+      resource2: {
+        ...
+      }
+    },
+    DELETE: {
+      resource1: {
+        ...
+      },
+      resource2: {
+        ...
+      }
+    }
+  }
+};
+
+export default MyResource
+```
 
 ## Basic example
 
@@ -103,94 +203,7 @@ dataProviderMappings: {
 }
 ```
 
-## Setup
-
-You need react-admin v2 for this.
-
-Install with npm
-```
-npm install ra-resource-aggregator
-```
-or with yarn
-```
-yarn add ra-resource-aggregator
-```
-
-Then in your app:
-```
-import ResourceAggregator from 'ra-resource-aggregator';
-import * as Resources from './Resources';
-
-this.resourceAggregator = new ResourceAggregator({
-  dataProvider: ...
-  resources: Resources
-  paramsPatch: ...
-    });
-```
-
-You can use the data provider of your choice for `dataProvider`. `paramsPatch`
-is an optional prop that can be a function to be applied to params everytime
-a new action is run by react-admin (e.g. data type conversions for arrays if
-your backend is a PostgreSQL database).
-
-`Resources` is a list of objects that follow a specific format:
-```
-const MyResource = {
-  resourceName: 'MyResource',
-  resource: (
-    <Resource
-      name="MyResource"
-      list={MyResourceList}
-      edit={MyResourceEdit}
-      create={MyResourceCreate}
-      options={{ label: LABEL }}
-    />
-  ),
-  dataProviderMappings: {
-    LIST: {
-      resource1: {
-        main: true,
-        params: oldParams => oldParams,
-        fields: ['id', ...],
-        key: data => data.id
-      },
-      resource2: {
-        main: false,
-        params: oldParams => oldParams,
-        fields: [...],
-        key: data => {... return id;}
-      }
-      ...
-    },
-    EDIT: {
-      resource1: {
-        ...
-      },
-      resource2: {
-        ...
-      }
-    },
-    CREATE: {
-      resource1: {
-        ...
-      },
-      resource2: {
-        ...
-      }
-    },
-    DELETE: {
-      resource1: {
-        ...
-      },
-      resource2: {
-        ...
-      }
-    }
-  }
-};
-
-export default MyResource
-```
+## Mappings
 
 The `dataProvierMappings` has the following props:
 
