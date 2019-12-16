@@ -1,0 +1,28 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "username": "jim",
+      "email": "jim@mail.com"
+    },
+    {
+      "id": 2,
+      "username": "john",
+      "email": "john@mail.com"
+    }
+  ],
+  "profiles": [
+    {
+      "first_name": "Jim",
+      "last_name": "Doe",
+      "user_id": 1,
+      "id": 1
+    },
+    {
+      "id": 2,
+      "first_name": "John",
+      "last_name": "Doe",
+      "user_id": 2
+    }
+  ]
+}

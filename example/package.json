@@ -1,0 +1,31 @@
+{
+  "name": "example",
+  "version": "0.0.1",
+  "description": "Example for resource aggregator",
+  "authors": [
+    "Mihail Dunaev"
+  ],
+  "license": "MIT",
+  "scripts": {
+    "start-json-server": "json-server --watch db.json",
+    "build": "webpack --env development",
+    "build-production": "webpack --env production"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.7.5",
+    "@babel/plugin-proposal-class-properties": "^7.7.0",
+    "@babel/polyfill": "^7.7.0",
+    "@babel/preset-env": "^7.7.6",
+    "@babel/preset-react": "^7.7.4",
+    "babel-loader": "^8.0.6",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10"
+  },
+  "dependencies": {
+    "json-server": "^0.15.1",
+    "ra-data-json-server": "^2.6.2",
+    "react": "^16.7.0",
+    "react-admin": "^2.6.2",
+    "react-dom": "^16.7.0"
+  }
+}
