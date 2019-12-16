@@ -36,7 +36,7 @@ class DataProvider {
   };
 
   provideData = (type, resource, params) => {
-    let newParams;
+    let newParams = params;
     if (this.paramsPatch) {
       newParams = this.paramsPatch(type, params);
     }
