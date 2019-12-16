@@ -289,6 +289,17 @@ non-main record from the aggregated data, so something like
 getId: data => data.profile_id,
 ```
 
-TODO describe `accumulate`
+#### Accumulate
 
-TODO add table with every prop + required/optional + short description
+Sometimes you might have many to many relationship between resources. For example,
+if you have a `users` resource and a `groups` resource, one user can be part of
+multiple groups and one group can have multiple users. To model this usually you
+use another resource/table (e.g. `users_groups`) to map user ids with group ids.
+In this case you can use the package in the following way: you add the
+`users_groups` resource to EDIT/CREATE/DELETE and add `accumulate: true` as prop
+to it. This will accumulate values found in `users_groups` into one field
+(instead of just using the first value it finds).
+
+All of this makes more sense if you look at UsersGroups in example.
+
+#### Props
