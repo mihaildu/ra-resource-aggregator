@@ -1,10 +1,11 @@
 Resource aggregator for react-admin.
 
+It allows you to edit/create/delete multiple resources in the same view.
+
 This is useful if you use a data provider that does one to one mapping between
 react-admin resources and backend entities (e.g. tables), like [hasura](https://hasura.io/) does.
 You might want to map a single resource to several backend entities for listing,
-editing and creating. This is where this package is useful, it allows you to use
-data from multiple entities in the list/edit/create views.
+editing and creating.
 
 This package was tested only with `react-admin@2.6.2`, `ra-data-hasura@0.0.2`
 and `ra-data-json-server@2.6.2`. Any data provider that is compatible with
