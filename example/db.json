@@ -9,6 +9,12 @@
       "id": 2,
       "username": "john",
       "email": "john@mail.com"
+    },
+    {
+      "username": "jane",
+      "email": "jane@mail.com",
+      "date_created": "2019-12-16T17:40:24.239Z",
+      "id": 3
     }
   ],
   "profiles": [
@@ -23,6 +29,12 @@
       "first_name": "John",
       "last_name": "Doe",
       "user_id": 2
+    },
+    {
+      "first_name": "Jane",
+      "last_name": "Doe",
+      "user_id": 3,
+      "id": 3
     }
   ],
   "groups": [

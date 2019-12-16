@@ -87,8 +87,11 @@ const UserProfiles = {
     CREATE: {
       users: {
         main: true,
-        initData: oldData => oldData,
-        fields: ['username', 'email'],
+        initData: oldData =>
+          Object.assign({}, oldData, {
+            date_created: new Date(Date.now())
+          }),
+        fields: ['username', 'email', 'date_created'],
         key: data => data.id
       },
       profiles: {
