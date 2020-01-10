@@ -7,7 +7,7 @@
   ],
   "license": "MIT",
   "scripts": {
-    "start-json-server": "json-server --watch db.json",
+    "start-json-server": "json-server --watch ../common/db.json",
     "build": "webpack --env development",
     "build-production": "webpack --env production"
   },

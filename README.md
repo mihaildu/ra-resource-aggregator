@@ -142,7 +142,7 @@ Then in the main app:
 
 ## Basic example
 
-(This example is implemented in [example](https://github.com/dryhten/ra-resource-aggregator/tree/master/example) directory. It's fully functional)
+(This example is implemented in [examples](https://github.com/dryhten/ra-resource-aggregator/tree/master/examples/example_users_profiles_groups) directory. It's fully functional)
 
 Let's take an example: we have a database with 2 tables, `users` and `profiles`.
 In `users` we have the `username` & `email` columns, in `profiles` we have
