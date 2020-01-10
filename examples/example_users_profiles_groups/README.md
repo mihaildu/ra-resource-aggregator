@@ -1,5 +1,9 @@
 ## Simple example aggregating resources
 
+This uses react admin version 3 by default. To use version 2 replace
+`package.json` with `package.json.ra2` (and with `package.json.ra3` to
+go back to version 3).
+
 ### Setup
 
 Install all packages
