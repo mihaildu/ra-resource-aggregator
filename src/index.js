@@ -3,7 +3,16 @@ class DataProvider {
     const { dataProvider, resources, paramsPatch } = props;
 
     this.paramsPatch = paramsPatch;
-    this.dataProvider = dataProvider;
+
+    if (typeof(dataProvider) === 'function') {
+      this.dataProvider = dataProvider;
+    } else {
+      // we need this for version 2 to version 3 conversion
+      this.dataProvider = (type, resource, params) => {
+        const prop = this.convertDataProvider[type];
+        return dataProvider[prop](resource, params);
+      };
+    }
 
     this.resourceMappings = {};
     for (let resourceName in resources) {
@@ -32,6 +41,22 @@ class DataProvider {
     CREATE: 'CREATE',
     DELETE: 'DELETE',
     DELETE_MANY: 'DELETE'
+  };
+
+  convertDataProvider = {
+    /**
+     * This will convert a data provider type from react-admin 2
+     * to a function name in a data provider react-admin 3
+     */
+    GET_LIST: 'getList',
+    GET_ONE: 'getOne',
+    GET_MANY: 'getMany',
+    GET_MANY_REFERENCE: 'getManyReference',
+    UPDATE: 'update',
+    UPDATE_MANY: 'updateMany',
+    CREATE: 'create',
+    DELETE: 'delete',
+    DELETE_MANY: 'deleteMany'
   };
 
   provideData = (type, resource, params) => {
