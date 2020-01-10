@@ -7,10 +7,11 @@ react-admin resources and backend entities (e.g. tables), like [hasura](https://
 You might want to map a single resource to several backend entities for listing,
 editing and creating.
 
-This package was tested only with `react-admin@2.6.2`, `ra-data-hasura@0.0.2`
-and `ra-data-json-server@2.6.2`. Any data provider that is compatible with
-react-admin 2.6.2 should work, but I can't guarantee. There is an open issue
-about running compatibility tests here
+This package was tested with `react-admin@2.6.2` and `react-admin@3.1.1`. In theory
+any react admin version greater than 2.6.2 should work. It was also tested against
+`ra-data-hasura@0.0.2` and `ra-data-json-server@2.6.2`. Any data provider that is
+compatible with react-admin 2 / 3 should work, but there is no guarantee. There is
+an open issue about running compatibility tests here
 https://github.com/dryhten/ra-resource-aggregator/issues/1
 
 ## Table of contents
