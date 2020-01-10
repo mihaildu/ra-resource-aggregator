@@ -26,7 +26,7 @@ https://github.com/dryhten/ra-resource-aggregator/issues/1
 
 ## Setup
 
-You need react-admin v2 for this.
+You need react-admin (version 2/3) for this.
 
 Install with npm
 ```
@@ -61,19 +61,11 @@ is an optional prop that can be a function to be applied to params everytime
 a new action is run by react-admin (e.g. data type conversions for arrays if
 your backend is a PostgreSQL database).
 
-`Resources` is a list of objects that follow a specific format:
+`Resources` is a list of objects that follow a specific format. For example, for
+`./Resources/MyAggregatedResource.js`:
 ```
-const MyResource = {
-  resourceName: 'MyResource',
-  resource: (
-    <Resource
-      name="MyResource"
-      list={MyResourceList}
-      edit={MyResourceEdit}
-      create={MyResourceCreate}
-      options={{ label: LABEL }}
-    />
-  ),
+const MyAggregatedResource = {
+  resourceName: 'MyAggregatedResource',
   dataProviderMappings: {
     LIST: {
       resource1: {
@@ -117,7 +109,35 @@ const MyResource = {
   }
 };
 
-export default MyResource
+export default MyAggregatedResource;
+```
+
+You can also add the React element to the object, so you can render in the main
+react admin app. For example, in ./Resources/MyAggregatedResource.js:
+```
+const MyAggregatedResource = {
+  resourceName: 'MyAggregatedResource',
+  dataProviderMappings: { ... },
+  resource: (
+    <Resource
+      name="MyAggregatedResource"
+      list={MyAggregatedResourceList}
+      edit={MyAggregatedResourceEdit}
+      create={MyAggregatedResourceCreate}
+      options={{ label: 'My Aggregated Resource' }}
+    />
+  ),
+};
+
+export default MyAggregatedResource;
+```
+
+Then in the main app:
+```
+<Admin dataProvider={this.resourceAggregator.provideData}>
+  {Resources.MyAggregatedResource.resource}
+  ...
+</Admin>
 ```
 
 ## Basic example
