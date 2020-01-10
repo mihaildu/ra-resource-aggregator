@@ -30,6 +30,6 @@
     "webpack-cli": "^3.3.10"
   },
   "peerDependencies": {
-    "react-admin": "^2.6.2"
+    "react-admin": ">=2.6.2"
   }
 }
