@@ -7,10 +7,13 @@ import {
   Edit,
   SimpleForm,
   TextInput,
+  NumberInput,
   Create,
   ReferenceArrayInput,
   SelectArrayInput
 } from "react-admin";
+
+import HiddenInput from "./common/HiddenInput";
 
 const UsersGroupsList = props => (
   <List {...props}>
@@ -22,17 +25,20 @@ const UsersGroupsList = props => (
 
 const UsersGroupsEdit = props => (
   <Edit {...props}>
-      <SimpleForm>
-        <TextInput source="username" />
-        <TextInput source="email" />
-        <ReferenceArrayInput
-          source="group_id"
-          reference="groups"
-          label="Groups"
-        >
-          <SelectArrayInput optionText="name" />
-        </ReferenceArrayInput>
-      </SimpleForm>
+    <SimpleForm>
+      <HiddenInput>
+        <NumberInput source="users_groups_id" disabled />
+      </HiddenInput>
+      <TextInput source="username" />
+      <TextInput source="email" />
+      <ReferenceArrayInput
+        source="group_id"
+        reference="groups"
+        label="Groups"
+      >
+        <SelectArrayInput optionText="name" />
+      </ReferenceArrayInput>
+    </SimpleForm>
   </Edit>
 );
 

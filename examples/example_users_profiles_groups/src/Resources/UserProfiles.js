@@ -7,8 +7,11 @@ import {
   Edit,
   SimpleForm,
   TextInput,
+  NumberInput,
   Create
 } from "react-admin";
+
+import HiddenInput from "./common/HiddenInput";
 
 const UserProfilesList = props => (
   <List {...props}>
@@ -23,12 +26,16 @@ const UserProfilesList = props => (
 
 const UserProfilesEdit = props => (
   <Edit {...props}>
-      <SimpleForm>
-        <TextInput source="username" />
-        <TextInput source="email" />
-        <TextInput source="first_name" />
-        <TextInput source="last_name" />
-      </SimpleForm>
+    <SimpleForm>
+      <HiddenInput>
+        <NumberInput source="user_id" disabled />
+        <NumberInput source="profiles_id" disabled />
+      </HiddenInput>
+      <TextInput source="username" />
+      <TextInput source="email" />
+      <TextInput source="first_name" />
+      <TextInput source="last_name" />
+    </SimpleForm>
   </Edit>
 );
 
