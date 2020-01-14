@@ -4491,9 +4491,9 @@ ra-language-english@^3.1.0:
   integrity sha512-5v1mu3ri/u4YEqm5iop/KXJ+mDt9sQ97GjY7wG/SkEyG+LXo+IllpDqkNXhHqSA6HpqAxmcFY/LO9Gh7ApQLRA==
 
 ra-resource-aggregator@^0.0.5:
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/ra-resource-aggregator/-/ra-resource-aggregator-0.0.4.tgz#5268c6f7c9cdba64fca0986279c790e9f5ad9e7d"
-  integrity sha512-PffSvfBWCsZ43nPeXhZD1g7MNrCUjYm4mxJdLbNso6WcDi56lSu39V0SYrQ78efTcvuugXbBW3QYXTyl7+2VPA==
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/ra-resource-aggregator/-/ra-resource-aggregator-0.0.5.tgz#1a20de0bcc75e942a21acb49544c0c74bbea1a5f"
+  integrity sha512-JiYEg5TOKIrsgFR4KFjmEfn/Er8QWel+BkA2usXLO67HZ8rh9hxcda5frvPuZe3G3IC3AHYL/t+HFIIcQIyjaA==
 
 ra-ui-materialui@^3.1.2:
   version "3.1.2"
