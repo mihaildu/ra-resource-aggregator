@@ -157,20 +157,18 @@ resources and actions to database tables and operations.
 
 We can create the view component similar to this:
 ```
-const UserProfilesList = props => {
-  return (
-    <List {...props}>
-      <Datagrid rowClick="edit">
-        <ReferenceField source="user_id" reference="users">
-          <TextField source="username" />
-          <TextField source="email" />
-        </ReferenceField>
-        <TextField source="first_name" />
-        <TextField source="last_name" />
-      </Datagrid>
-    </List>
-  );
-};
+const UserProfilesList = props => (
+  <List {...props}>
+    <Datagrid rowClick="edit">
+      <ReferenceField source="user_id" reference="users">
+        <TextField source="username" />
+        <TextField source="email" />
+      </ReferenceField>
+      <TextField source="first_name" />
+      <TextField source="last_name" />
+    </Datagrid>
+  </List>
+);
 ```
 
 However, if we want to create an edit view that allows us to change both fields
@@ -179,18 +177,54 @@ it wouldn't be possible in a straightforward way with react-admin.
 
 With this package you can do the data mappings and write an edit view like this:
 ```
-const UserProfilesEdit = props => {
-  return (
-    <Edit {...props}>
+const UserProfilesEdit = props => (
+  <Edit {...props}>
+    <SimpleForm>
+      <TextInput source="username" />
+      <TextInput source="email" />
+      <TextInput source="first_name" />
+      <TextInput source="last_name" />
+    </SimpleForm>
+  </Edit>
+);
+```
+
+**Note:** For some reasone (see https://github.com/dryhten/ra-resource-aggregator/issues/7) if you use react-admin version 3 with a data provider written for react-admin version 3, you might need to add all the sources to the Edit view, even if you don't use it. One approach can be to add the fields as hidden and disabled, for example:
+```
+const HiddenInput = props => (
+  <div style={{display: "none"}}>
+    {props.children}
+  </div>
+);
+
+const UserProfilesEdit = props => (
+  <Edit {...props}>
+    <SimpleForm>
+      <HiddenInput>
+        <NumberInput source="user_id" disabled />
+        <NumberInput source="profiles_id" disabled />
+      </HiddenInput>
+      <TextInput source="username" />
+      <TextInput source="email" />
+      <TextInput source="first_name" />
+      <TextInput source="last_name" />
+    </SimpleForm>
+  </Edit>
+);
+```
+
+You can have the same flat structure for the List view as well!
+```
+const UserProfilesList = props => (
+  <List {...props}>
       <Datagrid rowClick="edit">
-        <TextInput source="username" />
-        <TextInput source="email" />
-        <TextInput source="first_name" />
-        <TextInput source="last_name" />
+        <TextField source="username" />
+        <TextField source="email" />
+        <TextField source="first_name" />
+        <TextField source="last_name" />
       </Datagrid>
-    </Edit>
-  );
-};
+    </List>
+);
 ```
 
 To do the data mappings you'd have to write an object like this:
@@ -225,6 +259,7 @@ dataProviderMappings: {
         main: false,
         params: oldParams => oldParams,
         fields: [
+           { name: 'id', alias: 'profiles_id' },
           'first_name',
           'last_name',
           'user_id'
