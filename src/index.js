@@ -83,7 +83,35 @@ class DataProvider {
 
     const total = await totalRecords;
     const result = await this.handleGetQueries(queries, resources);
+
     const data = Object.values(result);
+    const { field, order } = params.sort;
+    data.sort((a, b) => {
+      if (
+        typeof a[field] === 'object' ||
+          typeof a[field] === 'undefined' ||
+          typeof a[field] ==='symbol'
+      ) {
+        return 1;
+      }
+
+      let first, second;
+      if (order === 'ASC') {
+        first = a[field];
+        second = b[field];
+      } else {
+        first = b[field];
+        second = a[field];
+      }
+
+      if (first > second) {
+        return 1;
+      }
+      if (first === second) {
+        return 0;
+      }
+      return -1;
+    });
     return {
       data,
       total
@@ -319,10 +347,12 @@ class DataProvider {
       const resource = resources[resourceName];
 
       let query;
-      let newParams = params;
+      let newParams = {...params};
+      newParams.sort = {};
       if (resource.params) {
         newParams = resource.params(params);
       }
+
       if (resource.main) {
         query = this.dataProvider(mainType, resourceName, newParams);
         if (getTotal) {
