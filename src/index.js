@@ -348,7 +348,10 @@ class DataProvider {
 
       let query;
       let newParams = {...params};
-      newParams.sort = {};
+      newParams.sort = {
+        field: "id",
+        order: "ASC"
+      };
       if (resource.params) {
         newParams = resource.params(params);
       }
