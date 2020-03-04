@@ -95,8 +95,6 @@ class DataProvider {
         return 1;
       }
 
-      // TODO: do dates too
-
       let first, second;
       if (order === 'ASC') {
         first = a[field];
