@@ -46,6 +46,7 @@ this.resourceAggregator = new ResourceAggregator({
   dataProvider: ...
   resources: Resources
   paramsPatch: ...
+  options: ...
 });
 
 ...
@@ -139,6 +140,17 @@ Then in the main app:
   ...
 </Admin>
 ```
+
+The `options` argument is optional and for now only accepts boolean `pageSort`, e.g.
+```
+this.resourceAggregator = new ResourceAggregator({
+  ...
+  options: { pageSort: true }
+});
+```
+
+This will enable page level sorting of records (and not whole records).
+
 
 ## Basic example
 
