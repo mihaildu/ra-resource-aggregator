@@ -14,6 +14,10 @@ compatible with react-admin 2 / 3 should work, but there is no guarantee. There 
 an open issue about running compatibility tests here
 https://github.com/dryhten/ra-resource-aggregator/issues/1
 
+Currently sorting after non main resource fields doesn't work. If you need that you
+might have to use ReferenceInput and sorting after the right field. There is an open
+issue about it https://github.com/dryhten/ra-resource-aggregator/issues/11
+
 ## Table of contents
 
 <!-- toc -->
@@ -46,6 +50,7 @@ this.resourceAggregator = new ResourceAggregator({
   dataProvider: ...
   resources: Resources
   paramsPatch: ...
+  options: ...
 });
 
 ...
@@ -139,6 +144,17 @@ Then in the main app:
   ...
 </Admin>
 ```
+
+The `options` argument is optional and for now only accepts boolean `pageSort`, e.g.
+```
+this.resourceAggregator = new ResourceAggregator({
+  ...
+  options: { pageSort: true }
+});
+```
+
+This will enable page level sorting of records (and not whole records).
+
 
 ## Basic example
 

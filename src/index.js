@@ -1,7 +1,13 @@
 class DataProvider {
   constructor(props) {
-    const { dataProvider, resources, paramsPatch } = props;
+    const {
+      dataProvider,
+      resources,
+      paramsPatch,
+      options
+    } = props;
 
+    this.options = this.getOptions(options);
     this.paramsPatch = paramsPatch;
 
     if (typeof(dataProvider) === 'function') {
@@ -33,6 +39,11 @@ class DataProvider {
       DELETE_MANY: this.handleDeleteMany
     };
   }
+
+  getOptions = options => ({
+    pageSort: false,
+    ...options
+  });
 
   actionToMappingType = {
     GET_LIST: 'LIST',
@@ -85,7 +96,17 @@ class DataProvider {
     const result = await this.handleGetQueries(queries, resources);
 
     const data = Object.values(result);
-    const { field, order } = params.sort;
+    if (this.options.pageSort) {
+      this.sortPageData(data, params.sort);
+    }
+
+    return {
+      data,
+      total
+    };
+  };
+
+  sortPageData = (data, { field, order }) => {
     data.sort((a, b) => {
       if (
         typeof a[field] === 'object' ||
@@ -112,10 +133,6 @@ class DataProvider {
       }
       return -1;
     });
-    return {
-      data,
-      total
-    };
   };
 
   handleGetOne = async (params, resources) => {
@@ -346,17 +363,20 @@ class DataProvider {
     for (let resourceName in resources) {
       const resource = resources[resourceName];
 
-      let query;
       let newParams = {...params};
-      newParams.sort = {
-        field: "id",
-        order: "ASC"
-      };
       if (resource.params) {
         newParams = resource.params(params);
       }
 
+      let query;
       if (resource.main) {
+        if (this.options.pageSort || !this.resourceHasField(resource, newParams.sort.field)) {
+          newParams.sort = {
+            field: "id",
+            order: "ASC"
+          };
+        }
+
         query = this.dataProvider(mainType, resourceName, newParams);
         if (getTotal) {
           totalRecords = this.getAllRecords({
@@ -377,6 +397,15 @@ class DataProvider {
       queries,
       totalRecords
     };
+  };
+
+  resourceHasField = (resource, field) => {
+    for (let resField of resource.fields) {
+      if (resField === field) {
+        return true;
+      }
+    }
+    return false;
   };
 
   handleGetQueries = async (queries, resources) => {
