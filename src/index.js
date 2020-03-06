@@ -41,7 +41,7 @@ class DataProvider {
   }
 
   getOptions = options => ({
-    pageSort: true,
+    pageSort: false,
     ...options
   });
 
