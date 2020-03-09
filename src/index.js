@@ -80,28 +80,35 @@ class DataProvider {
   };
 
   handleGetList = async (params, resources) => {
-    const { queries, totalRecords } = await this.runGetQueries({
-      mainType: 'GET_LIST',
-      params,
+    const queries = this.runGetQueries({
+      queryType: 'GET_LIST',
       resources,
-      getTotal: true
+      params
     });
-
-    const total = await totalRecords;
     const result = await this.handleGetQueries(queries, resources);
-
     const data = Object.values(result);
+
+    let pageData;
     if (this.options.pageSort) {
-      this.sortPageData(data, params.sort);
+      pageData = this.getPage(data, params.pagination);
+      this.sortData(pageData, params.sort);
+    } else {
+      this.sortData(data, params.sort);
+      pageData = this.getPage(data, params.pagination);
     }
 
     return {
-      data,
-      total
+      data: pageData,
+      total: data.length
     };
   };
 
-  sortPageData = (data, { field, order }) => {
+  getPage = (data, { page, perPage }) => {
+    const indexStart = (page - 1) * perPage;
+    return data.slice(indexStart, indexStart + perPage);
+  };
+
+  sortData = (data, { field, order }) => {
     data.sort((a, b) => {
       if (
         typeof a[field] === 'object' ||
@@ -131,13 +138,11 @@ class DataProvider {
   };
 
   handleGetOne = async (params, resources) => {
-    const { queries } = await this.runGetQueries({
-      mainType: 'GET_ONE',
-      params,
+    const queries = await this.runGetQueries({
+      queryType: 'GET_ONE',
       resources,
-      getTotal: false
+      params
     });
-
     const result = await this.handleGetQueries(queries, resources);
     const data = Object.values(result)[0];
     // going back from array to object & adding id required by react-admin
@@ -352,59 +357,38 @@ class DataProvider {
     };
   };
 
-  runGetQueries = ({ mainType, params, resources, getTotal = false }) => {
+  runGetQueries = ({ queryType, resources, params }) => {
     const queries = [];
-    let totalRecords = 0;
     for (let resourceName in resources) {
       const resource = resources[resourceName];
 
-      let newParams = { ...params };
-      if (resource.params) {
-        newParams = resource.params(params);
-      }
-
-      let query;
       if (resource.main) {
-        if (
-          this.options.pageSort ||
-          (newParams.sort &&
-            !this.resourceHasField(resource, newParams.sort.field))
-        ) {
-          newParams.sort = {
-            field: 'id',
-            order: 'ASC'
-          };
+        let newParams;
+        if (resource.params) {
+          newParams = resource.params(params);
+        } else {
+          newParams = { ...params };
         }
 
-        query = this.dataProvider(mainType, resourceName, newParams);
-        if (getTotal) {
-          totalRecords = this.getAllRecords({
-            resourceName,
-            filter: newParams.filter
-          }).then(res => res.data.length);
+        if (queryType === 'GET_LIST') {
+          queries.push({
+            query: this.getAllRecords({ resourceName, filter: newParams.filter }),
+            resourceName
+          });
+        } else if (queryType === 'GET_ONE') {
+          queries.push({
+            query: this.dataProvider('GET_ONE', resourceName, params),
+            resourceName
+          });
         }
       } else {
-        query = this.getAllRecords({ resourceName });
-      }
-      queries.push({
-        query,
-        resourceName
-      });
-    }
-
-    return {
-      queries,
-      totalRecords
-    };
-  };
-
-  resourceHasField = (resource, field) => {
-    for (let resField of resource.fields) {
-      if (resField === field) {
-        return true;
+        queries.push({
+          query: this.getAllRecords({ resourceName }),
+          resourceName
+        });
       }
     }
-    return false;
+    return queries;
   };
 
   handleGetQueries = async (queries, resources) => {
