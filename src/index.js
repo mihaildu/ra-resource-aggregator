@@ -370,7 +370,7 @@ class DataProvider {
 
       let query;
       if (resource.main) {
-        if (this.options.pageSort || !this.resourceHasField(resource, newParams.sort.field)) {
+        if (this.options.pageSort || newParams.sort && !this.resourceHasField(resource, newParams.sort.field)) {
           newParams.sort = {
             field: "id",
             order: "ASC"
