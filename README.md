@@ -75,13 +75,12 @@ const MyAggregatedResource = {
     LIST: {
       resource1: {
         main: true,
-        params: oldParams => oldParams,
+        params: oldParams => Object.assign({}, oldParams, { filter: { ... } }),
         fields: ['id', ...],
         key: data => data.id
       },
       resource2: {
         main: false,
-        params: oldParams => oldParams,
         fields: [...],
         key: data => {... return id;}
       }
@@ -249,13 +248,12 @@ dataProviderMappings: {
     LIST: {
       users: {
         main: true,
-        params: oldParams => oldParams,
+        params: oldParams => Object.assign({}, oldParams, { filter: { ... } }),
         fields: ['id', 'username', 'email'],
         key: data => data.id
       },
       profiles: {
         main: false,
-        params: oldParams => oldParams,
         fields: [
           'first_name',
           'last_name',
@@ -273,7 +271,6 @@ dataProviderMappings: {
       },
       profiles: {
         main: false,
-        params: oldParams => oldParams,
         fields: [
            { name: 'id', alias: 'profiles_id' },
           'first_name',
@@ -304,7 +301,7 @@ all our rows, having other data joining the result from other tables via foreign
 keys.
 
 `params`: function that will be applied to `GET_LIST` params before they are
-sent to data provider (e.g. filtering, pagination etc).
+sent to data provider (e.g. filtering). This only works for main tables.
 
 `fields`: what fields to use for this resource. For example, if the backend is
 a database, what columns to get.
@@ -381,7 +378,7 @@ These are for each resource (e.g. `LIST.resource1`). The ones in bold are requir
 
 * List
   * **main**: boolean, marks the main table
-  * *params*: function (params), applied to params before sending them to dataProvider, must return new params
+  * *params*: function (params), applied to params before sending them to dataProvider, must return new params (only works for main table)
   * **fields**: array of either string or objects of {name: string, alias: string}
     what fields to use from the resource; fields should be unique, if they are not use
     alias to define the resulting unique name after aggregation; id must be present here for main table
