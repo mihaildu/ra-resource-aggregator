@@ -14,7 +14,7 @@ compatible with react-admin 2 / 3 should work, but there is no guarantee. There 
 an open issue about running compatibility tests here
 https://github.com/dryhten/ra-resource-aggregator/issues/1
 
-Currently filtering is not supported.
+Currently filtering is not supported: https://github.com/dryhten/ra-resource-aggregator/issues/14
 
 ## Table of contents
 
