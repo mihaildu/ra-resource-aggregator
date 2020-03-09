@@ -360,11 +360,27 @@ class DataProvider {
   runGetQueries = ({ queryType, resources, params }) => {
     const queries = [];
     for (let resourceName in resources) {
-      if (queryType === 'GET_ONE' && resources[resourceName].main) {
-        queries.push({
-          query: this.dataProvider('GET_ONE', resourceName, params),
-          resourceName
-        });
+      const resource = resources[resourceName];
+
+      if (resource.main) {
+        let newParams;
+        if (resource.params) {
+          newParams = resource.params(params);
+        } else {
+          newParams = { ...params };
+        }
+
+        if (queryType === 'GET_LIST') {
+          queries.push({
+            query: this.getAllRecords({ resourceName, filter: newParams.filter }),
+            resourceName
+          });
+        } else if (queryType === 'GET_ONE') {
+          queries.push({
+            query: this.dataProvider('GET_ONE', resourceName, params),
+            resourceName
+          });
+        }
       } else {
         queries.push({
           query: this.getAllRecords({ resourceName }),
