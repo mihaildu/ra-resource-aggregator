@@ -1,16 +1,11 @@
 class DataProvider {
   constructor(props) {
-    const {
-      dataProvider,
-      resources,
-      paramsPatch,
-      options
-    } = props;
+    const { dataProvider, resources, paramsPatch, options } = props;
 
     this.options = this.getOptions(options);
     this.paramsPatch = paramsPatch;
 
-    if (typeof(dataProvider) === 'function') {
+    if (typeof dataProvider === 'function') {
       this.dataProvider = dataProvider;
     } else {
       // we need this for version 2 to version 3 conversion
@@ -110,8 +105,8 @@ class DataProvider {
     data.sort((a, b) => {
       if (
         typeof a[field] === 'object' ||
-          typeof a[field] === 'undefined' ||
-          typeof a[field] ==='symbol'
+        typeof a[field] === 'undefined' ||
+        typeof a[field] === 'symbol'
       ) {
         return 1;
       }
@@ -363,17 +358,21 @@ class DataProvider {
     for (let resourceName in resources) {
       const resource = resources[resourceName];
 
-      let newParams = {...params};
+      let newParams = { ...params };
       if (resource.params) {
         newParams = resource.params(params);
       }
 
       let query;
       if (resource.main) {
-        if (this.options.pageSort || newParams.sort && !this.resourceHasField(resource, newParams.sort.field)) {
+        if (
+          this.options.pageSort ||
+          (newParams.sort &&
+            !this.resourceHasField(resource, newParams.sort.field))
+        ) {
           newParams.sort = {
-            field: "id",
-            order: "ASC"
+            field: 'id',
+            order: 'ASC'
           };
         }
 
@@ -426,7 +425,11 @@ class DataProvider {
       let query;
       const resource = resources[resourceName];
       if (!resource.accumulate) {
-        query = this.runNonAccumulateUpdateQuery(resource, resourceName, params);
+        query = this.runNonAccumulateUpdateQuery(
+          resource,
+          resourceName,
+          params
+        );
       } else {
         query = this.runAccumulateQueries(params, resource, resourceName);
       }
@@ -472,9 +475,13 @@ class DataProvider {
         break;
       }
     }
-    const mainResourceResult = await this.dataProvider('CREATE', mainResourceName, {
-      data: mainResource.data
-    });
+    const mainResourceResult = await this.dataProvider(
+      'CREATE',
+      mainResourceName,
+      {
+        data: mainResource.data
+      }
+    );
 
     // run all other creates
     const queries = [];
@@ -579,13 +586,7 @@ class DataProvider {
     });
   };
 
-  addFieldData = ({
-    aggregatedData,
-    row,
-    key,
-    field,
-    accumulate = false
-  }) => {
+  addFieldData = ({ aggregatedData, row, key, field, accumulate = false }) => {
     let srcField, dstField;
     if (typeof field === 'string') {
       dstField = field;
@@ -614,7 +615,9 @@ class DataProvider {
      */
     const aggregatedData = {};
 
-    let mainResource = Object.values(resources).find(resource => resource.main === true);
+    let mainResource = Object.values(resources).find(
+      resource => resource.main === true
+    );
     mainResource.data.forEach(row => {
       const key = mainResource.key(row, resources);
       aggregatedData[key] = {};
