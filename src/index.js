@@ -68,7 +68,7 @@ class DataProvider {
   provideData = (type, resource, params) => {
     let newParams = params;
     if (this.paramsPatch) {
-      newParams = this.paramsPatch(type, params);
+      newParams = this.paramsPatch(type, resource, params);
     }
 
     const mappings = this.resourceMappings[resource];
