@@ -1,6 +1,6 @@
 {
   "name": "ra-resource-aggregator",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "Resource aggregator for react-admin",
   "main": "lib/main.js",
   "authors": [
