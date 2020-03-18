@@ -99,7 +99,7 @@ class DataProvider {
 
     return {
       data: pageData,
-      total: data.length
+      total: result.total
     };
   };
 
