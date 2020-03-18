@@ -686,15 +686,9 @@ class DataProvider {
 
   getAllRecords = ({ resourceName, resource, filter = {} }) => {
     return this.dataProvider('GET_LIST', resourceName, {
-      pagination: { page: 1, perPage: 1 },
+      pagination: { page: 1, perPage: null },
       sort: { field: this.getFieldName(resource.fields[0]), order: 'DESC' },
       filter
-    }).then(res => {
-      return this.dataProvider('GET_LIST', resourceName, {
-        pagination: { page: 1, perPage: res.total },
-        sort: { field: this.getFieldName(resource.fields[0]), order: 'DESC' },
-        filter
-      });
     });
   };
 }
