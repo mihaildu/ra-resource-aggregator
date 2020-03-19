@@ -370,9 +370,22 @@ class DataProvider {
           newParams = { ...params };
         }
 
+        let sort = { field: 'id', sort: 'DESC' };
+        if (
+          newParams.sort &&
+          newParams.sort.field &&
+          resource.fields.indexOf(newParams.sort.field) !== -1
+        ) {
+          sort = newParams.sort;
+        }
+
         if (queryType === 'GET_LIST') {
           queries.push({
-            query: this.getAllRecords({ resourceName, filter: newParams.filter }),
+            query: this.getAllRecords({
+              resourceName,
+              filter: newParams.filter,
+              sort: sort
+            }),
             resourceName
           });
         } else if (queryType === 'GET_ONE') {
@@ -676,15 +689,15 @@ class DataProvider {
     }
   };
 
-  getAllRecords = ({ resourceName, filter = {} }) => {
+  getAllRecords = ({ resourceName, filter = {}, sort = { order: 'DESC' } }) => {
     return this.dataProvider('GET_LIST', resourceName, {
       pagination: { page: 1, perPage: 1 },
-      sort: { field: 'id', order: 'DESC' },
+      sort: sort,
       filter
     }).then(res => {
       return this.dataProvider('GET_LIST', resourceName, {
         pagination: { page: 1, perPage: res.total },
-        sort: { field: 'id', order: 'DESC' },
+        sort: sort,
         filter
       });
     });
