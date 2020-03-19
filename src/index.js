@@ -370,9 +370,22 @@ class DataProvider {
           newParams = { ...params };
         }
 
+        let sort = { field: 'id', sort: 'DESC' };
+        if (
+          newParams.sort &&
+          newParams.sort.field &&
+          resource.fields.indexOf(newParams.sort.field) !== -1
+        ) {
+          sort = newParams.sort;
+        }
+
         if (queryType === 'GET_LIST') {
           queries.push({
-            query: this.getAllRecords({ resourceName, filter: newParams.filter, sort: newParams.sort }),
+            query: this.getAllRecords({
+              resourceName,
+              filter: newParams.filter,
+              sort: sort
+            }),
             resourceName
           });
         } else if (queryType === 'GET_ONE') {
