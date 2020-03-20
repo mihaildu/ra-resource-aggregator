@@ -372,7 +372,7 @@ class DataProvider {
 
         if (queryType === 'GET_LIST') {
           queries.push({
-            query: this.getAllRecords({ resourceName, filter: newParams.filter }),
+            query: this.getAllRecords({ resourceName, resource, filter: newParams.filter }),
             resourceName
           });
         } else if (queryType === 'GET_ONE') {
@@ -383,7 +383,7 @@ class DataProvider {
         }
       } else {
         queries.push({
-          query: this.getAllRecords({ resourceName }),
+          query: this.getAllRecords({ resourceName, resource }),
           resourceName
         });
       }
@@ -571,15 +571,8 @@ class DataProvider {
   };
 
   addFieldData = ({ aggregatedData, row, key, field, accumulate = false }) => {
-    let srcField, dstField;
-    if (typeof field === 'string') {
-      dstField = field;
-      srcField = field;
-    } else {
-      dstField = field.alias;
-      srcField = field.name;
-    }
-
+    const srcField = this.getFieldName(field);
+    const dstField = this.getFieldAlias(field);
     if (accumulate) {
       if (aggregatedData[key][dstField]) {
         aggregatedData[key][dstField].push(row[srcField]);
@@ -664,27 +657,40 @@ class DataProvider {
      */
     for (let resourceName in resources) {
       const resource = resources[resourceName];
-      for (let fieldName of resource.fields) {
-        if (typeof fieldName === 'string' && fieldName === paramName) {
+      for (let field of resource.fields) {
+        const fieldName = this.getFieldName(field);
+        const fieldAlias = this.getFieldAlias(field);
+        if (fieldAlias === paramName) {
           resource[key][fieldName] = paramsData[paramName];
-          return;
-        } else if (fieldName.alias === paramName) {
-          resource[key][fieldName.name] = paramsData[paramName];
           return;
         }
       }
     }
   };
 
-  getAllRecords = ({ resourceName, filter = {} }) => {
+  getFieldAlias = field => {
+    if (typeof field === 'string') {
+      return field;
+    }
+    return field.alias;
+  };
+
+  getFieldName = field => {
+    if (typeof field === 'string') {
+      return field;
+    }
+    return field.name;
+  };
+
+  getAllRecords = ({ resourceName, resource, filter = {} }) => {
     return this.dataProvider('GET_LIST', resourceName, {
       pagination: { page: 1, perPage: 1 },
-      sort: { field: 'id', order: 'DESC' },
+      sort: { field: this.getFieldName(resource.fields[0]), order: 'DESC' },
       filter
     }).then(res => {
       return this.dataProvider('GET_LIST', resourceName, {
         pagination: { page: 1, perPage: res.total },
-        sort: { field: 'id', order: 'DESC' },
+        sort: { field: this.getFieldName(resource.fields[0]), order: 'DESC' },
         filter
       });
     });

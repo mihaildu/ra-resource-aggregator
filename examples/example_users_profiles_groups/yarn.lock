@@ -4490,10 +4490,10 @@ ra-language-english@^3.1.0:
   resolved "https://registry.yarnpkg.com/ra-language-english/-/ra-language-english-3.1.0.tgz#2fa509c5cd1127f9ce58097829b8bc6a3d12f5cc"
   integrity sha512-5v1mu3ri/u4YEqm5iop/KXJ+mDt9sQ97GjY7wG/SkEyG+LXo+IllpDqkNXhHqSA6HpqAxmcFY/LO9Gh7ApQLRA==
 
-ra-resource-aggregator@^0.0.14:
-  version "0.0.14"
-  resolved "https://registry.yarnpkg.com/ra-resource-aggregator/-/ra-resource-aggregator-0.0.14.tgz#78ae6c2325df3a9a7161c0d1e82a45932e292220"
-  integrity sha512-7WRyxbJ1dmyttvgiTuPq6H41HzF+dKQicBRKHxHnWihz30EptOEJsw7wdKUJ9YSZheWudYta7p2g9Z9ACCNR3Q==
+ra-resource-aggregator@^0.0.15:
+  version "0.0.15"
+  resolved "https://registry.yarnpkg.com/ra-resource-aggregator/-/ra-resource-aggregator-0.0.15.tgz#b7a6ecf129e28d39fdae9db805bacbc8d811f108"
+  integrity sha512-FcE4gCM3rwxCJFvFe/Fhfs3iJRsB3WtyM5WvYed1XwlEciKLsxmvuq87n1vdJwn4D+Qu9wr7sKK9q0Fg75m6BA==
 
 ra-ui-materialui@^3.1.2:
   version "3.1.2"
