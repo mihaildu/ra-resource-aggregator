@@ -571,15 +571,8 @@ class DataProvider {
   };
 
   addFieldData = ({ aggregatedData, row, key, field, accumulate = false }) => {
-    let srcField, dstField;
-    if (typeof field === 'string') {
-      dstField = field;
-      srcField = field;
-    } else {
-      dstField = field.alias;
-      srcField = field.name;
-    }
-
+    const srcField = this.getFieldName(field);
+    const dstField = this.getFieldAlias(field);
     if (accumulate) {
       if (aggregatedData[key][dstField]) {
         aggregatedData[key][dstField].push(row[srcField]);
@@ -664,16 +657,22 @@ class DataProvider {
      */
     for (let resourceName in resources) {
       const resource = resources[resourceName];
-      for (let fieldName of resource.fields) {
-        if (typeof fieldName === 'string' && fieldName === paramName) {
+      for (let field of resource.fields) {
+        const fieldName = this.getFieldName(field);
+        const fieldAlias = this.getFieldAlias(field);
+        if (fieldAlias === paramName) {
           resource[key][fieldName] = paramsData[paramName];
-          return;
-        } else if (fieldName.alias === paramName) {
-          resource[key][fieldName.name] = paramsData[paramName];
           return;
         }
       }
     }
+  };
+
+  getFieldAlias = field => {
+    if (typeof field === 'string') {
+      return field;
+    }
+    return field.alias;
   };
 
   getFieldName = field => {
