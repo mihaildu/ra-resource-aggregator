@@ -530,12 +530,14 @@ class DataProvider {
 
       if (resource.accumulate) {
         const idsToDelete = resource.getId(params.previousData);
-        idsToDelete.forEach(id => {
-          this.dataProvider('DELETE', resourceName, {
-            id,
-            previousData: {}
+        if (idsToDelete) {
+          idsToDelete.forEach(id => {
+            this.dataProvider('DELETE', resourceName, {
+              id,
+              previousData: {}
+            });
           });
-        });
+        }
       } else {
         this.dataProvider('DELETE', resourceName, {
           id: resource.getId(params.previousData),
