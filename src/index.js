@@ -86,7 +86,7 @@ class DataProvider {
       params
     });
     const result = await this.handleGetQueries(queries, resources);
-    const data = Object.values(result);
+    const data = Object.values(result.data);
 
     let pageData;
     if (this.options.pageSort) {
@@ -99,7 +99,7 @@ class DataProvider {
 
     return {
       data: pageData,
-      total: data.length
+      total: result.total
     };
   };
 
@@ -144,7 +144,7 @@ class DataProvider {
       params
     });
     const result = await this.handleGetQueries(queries, resources);
-    const data = Object.values(result)[0];
+    const data = Object.values(result.data)[0];
     // going back from array to object & adding id required by react-admin
     return {
       data: Object.assign({}, data, { id: parseInt(params.id) })
@@ -282,8 +282,8 @@ class DataProvider {
     }
 
     const result = await this.handleUpdateQueries(queries, resources);
-    const data = Object.values(result)[0];
-    const id = parseInt(Object.keys(result)[0]);
+    const data = Object.values(result.data)[0];
+    const id = parseInt(Object.keys(result.data)[0]);
     return {
       id,
       data: Object.assign({}, data, { id })
@@ -323,8 +323,8 @@ class DataProvider {
       mainResourceData,
       mainResourceName
     );
-    const data = Object.values(result)[0];
-    const id = parseInt(Object.keys(result)[0]);
+    const data = Object.values(result.data)[0];
+    const id = parseInt(Object.keys(result.data)[0]);
     return {
       data: Object.assign({}, data, { id })
     };
@@ -561,7 +561,7 @@ class DataProvider {
   };
 
   storeResourcesData = (resourcesData, resourceNames, resources) => {
-    resourcesData.forEach(({ data: resourceData }, index) => {
+    resourcesData.forEach(({ data: resourceData, total: resourceTotal }, index) => {
       const resourceName = resourceNames[index];
       const resource = resources[resourceName];
       if (!Array.isArray(resourceData)) {
@@ -569,6 +569,7 @@ class DataProvider {
       } else {
         resource.data = resourceData;
       }
+      resource.total = resourceTotal;
     });
   };
 
@@ -576,13 +577,13 @@ class DataProvider {
     const srcField = this.getFieldName(field);
     const dstField = this.getFieldAlias(field);
     if (accumulate) {
-      if (aggregatedData[key][dstField]) {
-        aggregatedData[key][dstField].push(row[srcField]);
+      if (aggregatedData.data[key][dstField]) {
+        aggregatedData.data[key][dstField].push(row[srcField]);
       } else {
-        aggregatedData[key][dstField] = [row[srcField]];
+        aggregatedData.data[key][dstField] = [row[srcField]];
       }
     } else {
-      aggregatedData[key][dstField] = row[srcField];
+      aggregatedData.data[key][dstField] = row[srcField];
     }
   };
 
@@ -592,14 +593,15 @@ class DataProvider {
      * resource.data contains rows with all the fields
      * resource.fields specifies which fields to aggregate
      */
-    const aggregatedData = {};
-
     let mainResource = Object.values(resources).find(
       resource => resource.main === true
     );
+
+    const aggregatedData = {data: {}, total: mainResource.total};
+
     mainResource.data.forEach(row => {
       const key = mainResource.key(row, resources);
-      aggregatedData[key] = {};
+      aggregatedData.data[key] = {};
       mainResource.fields.forEach(field => {
         this.addFieldData({
           aggregatedData,
@@ -620,7 +622,7 @@ class DataProvider {
 
       resource.data.forEach(row => {
         const key = resource.key(row, resources);
-        if (!aggregatedData[key]) {
+        if (!aggregatedData.data[key]) {
           // row has no relation with main resource data
           return;
         }
@@ -686,15 +688,9 @@ class DataProvider {
 
   getAllRecords = ({ resourceName, resource, filter = {} }) => {
     return this.dataProvider('GET_LIST', resourceName, {
-      pagination: { page: 1, perPage: 1 },
+      pagination: { page: 1, perPage: null },
       sort: { field: this.getFieldName(resource.fields[0]), order: 'DESC' },
       filter
-    }).then(res => {
-      return this.dataProvider('GET_LIST', resourceName, {
-        pagination: { page: 1, perPage: res.total },
-        sort: { field: this.getFieldName(resource.fields[0]), order: 'DESC' },
-        filter
-      });
     });
   };
 }
