@@ -20,6 +20,7 @@ const App = () => (
     {Resources.Users.resource}
     {Resources.Profiles.resource}
     {Resources.UsersGroups.resource}
+    {Resources.Tokens.resource}
     <Resource name="groups" />
   </Admin>
 );
