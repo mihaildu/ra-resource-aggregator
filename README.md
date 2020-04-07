@@ -312,7 +312,7 @@ where data is merged.
 
 #### EDIT
 
-The props are similar to `LIST`. One difference is that every non-main resource
+The props are similar to `LIST`. One difference is that every resource
 must include the `id` field in `fields`. The thing is that every field must be
 a unique string (since it's aggregated), so `fields` supports the following
 format
