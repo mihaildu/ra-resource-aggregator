@@ -145,9 +145,8 @@ class DataProvider {
     });
     const result = await this.handleGetQueries(queries, resources);
     const data = Object.values(result)[0];
-    // going back from array to object & adding id required by react-admin
     return {
-      data: Object.assign({}, data, { id: parseInt(params.id) })
+      data
     };
   };
 
@@ -283,10 +282,10 @@ class DataProvider {
 
     const result = await this.handleUpdateQueries(queries, resources);
     const data = Object.values(result)[0];
-    const id = parseInt(Object.keys(result)[0]);
+    const id = Object.keys(result)[0];
     return {
       id,
-      data: Object.assign({}, data, { id })
+      data
     };
   };
 
@@ -324,9 +323,8 @@ class DataProvider {
       mainResourceName
     );
     const data = Object.values(result)[0];
-    const id = parseInt(Object.keys(result)[0]);
     return {
-      data: Object.assign({}, data, { id })
+      data
     };
   };
 
@@ -443,7 +441,6 @@ class DataProvider {
   handleUpdateQueries = async (queries, resources) => {
     const queryPromises = queries.map(query => query.query);
     const resourceNames = queries.map(query => query.resourceName);
-
     const resourcesData = await Promise.all(queryPromises);
     this.storeResourcesData(resourcesData, resourceNames, resources);
     return this.aggregateData(resources);

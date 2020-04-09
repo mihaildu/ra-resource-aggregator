@@ -4,18 +4,22 @@ import { Admin, Resource } from "react-admin";
 import jsonServerProvider from "ra-data-json-server";
 import ResourceAggregator from 'ra-resource-aggregator';
 
-import * as Resources from './Resources';
+import * as Resources from "./Resources";
 
+const jsonDataProvider = jsonServerProvider("http://localhost:3000");
 
-const dataProvider = jsonServerProvider("http://localhost:3000");
 
 const resourceAggregator = new ResourceAggregator({
-  dataProvider,
+  dataProvider: jsonDataProvider,
   resources: Resources
 });
 
+const dataProvider = async (type, resource, params) => {
+  return resourceAggregator.provideData(type, resource, params);
+};
+
 const App = () => (
-  <Admin dataProvider={resourceAggregator.provideData}>
+  <Admin dataProvider={dataProvider}>
     {Resources.UserProfiles.resource}
     {Resources.Users.resource}
     {Resources.Profiles.resource}

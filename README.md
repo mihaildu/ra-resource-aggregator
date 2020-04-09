@@ -312,7 +312,7 @@ where data is merged.
 
 #### EDIT
 
-The props are similar to `LIST`. One difference is that every non-main resource
+The props are similar to `LIST`. One difference is that every resource
 must include the `id` field in `fields`. The thing is that every field must be
 a unique string (since it's aggregated), so `fields` supports the following
 format
@@ -323,9 +323,9 @@ fields: [ { name: 'id', alias: 'profile_id' } ]
 
 #### CREATE
 
-Similar props. `params` function is not needed. There is an extra optional prop
-`initData` that can initialize data for a specific resource (e.g. adding
-`data_created` to form data).
+Similar props. `params` function is not needed. You must include 'id' field for
+main resource. There is an extra optional prop `initData` that can initialize data
+for a specific resource (e.g. adding `data_created` to form data).
 
 ```
 initData: oldData =>
@@ -348,8 +348,9 @@ getForeignKey: id => ({
 
 #### DELETE
 
-Props needed: `main`, `fields` - can be empty array for main table. For non-main
-tables it must include id. `key` - the same as above.
+Props needed: `main`, `fields` - needs id for all resources. For non-main
+resources it must include the field returned in `key` function.
+`key` - the same as above.
 
 A new prop is `getId` for non-main tables that should return the id of the
 non-main record from the aggregated data, so something like
