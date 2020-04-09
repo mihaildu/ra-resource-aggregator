@@ -323,9 +323,8 @@ class DataProvider {
       mainResourceName
     );
     const data = Object.values(result)[0];
-    const id = Object.keys(result)[0];
     return {
-      data: Object.assign({}, data, { id })
+      data
     };
   };
 

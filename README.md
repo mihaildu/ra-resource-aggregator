@@ -323,9 +323,9 @@ fields: [ { name: 'id', alias: 'profile_id' } ]
 
 #### CREATE
 
-Similar props. `params` function is not needed. There is an extra optional prop
-`initData` that can initialize data for a specific resource (e.g. adding
-`data_created` to form data).
+Similar props. `params` function is not needed. You must include 'id' field for
+main resource. There is an extra optional prop `initData` that can initialize data
+for a specific resource (e.g. adding `data_created` to form data).
 
 ```
 initData: oldData =>
