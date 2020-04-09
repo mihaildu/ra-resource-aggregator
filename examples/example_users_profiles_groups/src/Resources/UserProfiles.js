@@ -98,7 +98,7 @@ const UserProfiles = {
           Object.assign({}, oldData, {
             date_created: new Date(Date.now())
           }),
-        fields: ['username', 'email', 'date_created'],
+        fields: ['id', 'username', 'email', 'date_created'],
         key: data => data.id
       },
       profiles: {
@@ -117,12 +117,12 @@ const UserProfiles = {
     DELETE: {
       users: {
         main: true,
-        fields: [],
+        fields: ['id'],
         key: data => data.id
       },
       profiles: {
         main: false,
-        fields: [ { name: 'id', alias: 'profiles_id' } ],
+        fields: [ { name: 'id', alias: 'profiles_id' }, 'user_id' ],
         getId: data => data.profiles_id,
         key: data => data.user_id,
       }

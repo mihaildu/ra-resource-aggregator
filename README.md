@@ -348,8 +348,9 @@ getForeignKey: id => ({
 
 #### DELETE
 
-Props needed: `main`, `fields` - can be empty array for main table. For non-main
-tables it must include id. `key` - the same as above.
+Props needed: `main`, `fields` - needs id for all resources. For non-main
+resources it must include the field returned in `key` function.
+`key` - the same as above.
 
 A new prop is `getId` for non-main tables that should return the id of the
 non-main record from the aggregated data, so something like
