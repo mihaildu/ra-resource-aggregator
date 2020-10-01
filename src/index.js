@@ -147,7 +147,7 @@ class DataProvider {
     const data = Object.values(result)[0];
     // going back from array to object & adding id required by react-admin
     return {
-      data: Object.assign({}, data, { id: parseInt(params.id) })
+      data: Object.assign({}, data, { id: params.id })
     };
   };
 
